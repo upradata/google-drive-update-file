@@ -1,0 +1,21 @@
+{
+  "name": "google-drive-upload-file",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/local-auth": "^2.1.0",
+    "@types/node": "^20.10.4",
+    "googleapis": "^105.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.9",
+    "has-flag": "^5.0.1"
+  }
+}

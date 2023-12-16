@@ -1,0 +1,27 @@
+{
+    // For IDE
+    "extends": "./tsconfig.base.json",
+    "compilerOptions": {
+        "outDir": "lib-esm",
+        "module": "ESNext",
+    },
+    "include": [
+        "src"
+    ],
+    "exclude": [
+        "node_modules",
+        "src/**/*.spec.ts"
+    ],
+    "ts-node": {
+        // It is faster to skip typechecking.
+        // Remove if you want ts-node to do typechecking.
+        "transpileOnly": true,
+        "files": true,
+        "compilerOptions": {
+            // compilerOptions specified here will override those declared below,
+            // but *only* in ts-node.  Useful if you want ts-node and tsc to use
+            // different options with a single tsconfig.json.
+            "module": "CommonJS"
+        }
+    }
+}
