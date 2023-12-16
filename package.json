@@ -12,9 +12,11 @@
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "@types/node": "^20.10.4",
+    "fs-extra": "^11.2.0",
     "googleapis": "^105.0.0"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "esbuild": "^0.19.9",
     "has-flag": "^5.0.1"
   }
