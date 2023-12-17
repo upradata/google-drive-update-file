@@ -3,7 +3,7 @@ export const config = {
     define: { IS_DEV: 'true', IS_PROD: 'false', IS_WEB: 'false' },
     charset: 'utf8',
     entryPoints: [ 'src/ecole-drive.mts' ],
-    outdir: 'build-test',
+    outdir: 'build-dev',
     bundle: true,
     packages: 'external',
     sourcemap: true,
