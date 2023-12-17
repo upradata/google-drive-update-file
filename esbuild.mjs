@@ -1,16 +1,21 @@
 import * as esbuild from 'esbuild';
 import hasFlag from 'has-flag';
 
-const isProd = hasFlag('prod');
+const isEsm = hasFlag('esm');
+const isCjs = hasFlag('cjs');
+const isCjsFull = hasFlag('cjs-full');
 
-console.log(`Running in "${isProd ? 'PRODUCTION' : 'DEV'}" mode`);
+// console.log(`Running in "${isProd ? 'PRODUCTION' : 'DEV'}" mode`);
 
 
 const getConfig = () => {
-    if (isProd)
-        return import('./esbuild-config.prod.mjs');
+    if (isEsm)
+        return import('./esbuild-config.esm.mjs');
 
-    return import('./esbuild-config.dev.mjs');
+    if (isCjs)
+        return import('./esbuild-config.cjs.mjs');
+
+    return import('./esbuild-config.cjs-fullbundle.mjs');
 };
 
 

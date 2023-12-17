@@ -43,20 +43,24 @@ const metadataInit: Partial<Metadata> = {
 };
 
 export const createMetadataManager = (metadataFiles: Metadata<string, string, string>) => {
+
+    let metadata: Metadata;
+
     const load = async (): Promise<Metadata> => {
 
         const datas = await Promise.all(Object.entries(metadataFiles).map(async ([ name, filePath ]) => {
             await fs.ensureFile(filePath);
 
-            const data = (await fs.readFile(filePath, 'utf-8')) || metadataInit[ name ];
+            const data = await fs.readFile(filePath, 'utf-8');
 
             if (!data)
-                return [ name, undefined ];
+                return [ name, metadataInit[ name ] ];
 
             return [ name, JSON.parse(data) ];
         }));
 
-        return Object.fromEntries(datas);
+        metadata = Object.fromEntries(datas);
+        return metadata;
     };
 
 
@@ -67,6 +71,10 @@ export const createMetadataManager = (metadataFiles: Metadata<string, string, st
     return {
         load,
         save,
-        metadataFiles
+        metadataFiles,
+        getMetadata: () => metadata
     };
 };
+
+
+export type MetadataManager = ReturnType<typeof createMetadataManager>;

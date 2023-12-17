@@ -1,6 +1,6 @@
-
 import fs from 'fs-extra';
-import path from 'path';
+import path from 'node:path';
+
 
 export const findUpDirectory = async (dir: string, condition: (currentDir: string) => Promise<boolean>): Promise<string> => {
     const isRoot = (filepath: string) => path.dirname(filepath) === filepath;
