@@ -3,7 +3,7 @@ import { google, Auth } from 'googleapis';
 import { MetadataManager, Token } from './metadata.mjs';
 
 
-export const logIn = async (metadataManager: MetadataManager) => {
+export const logIn = (metadataManager: MetadataManager) => {
     // If modifying these scopes, delete token.json.
     const SCOPES = [
         // 'https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -45,13 +45,17 @@ export const logIn = async (metadataManager: MetadataManager) => {
 
 
     // Load or request or authorization to call APIs.
-    async function authorize() {
-        let client = await loadSavedCredentialsIfExist();
+    async function authorize(options: { useSavedToken?: boolean; } = {}) {
+        const { useSavedToken = true } = options;
 
-        if (client)
-            return client;
+        if (useSavedToken) {
+            const client = await loadSavedCredentialsIfExist();
 
-        client = await authenticate({
+            if (client)
+                return client;
+        }
+
+        const client = await authenticate({
             scopes: SCOPES,
             keyfilePath: metadataManager.metadataFiles.credentials,
         });
@@ -66,7 +70,14 @@ export const logIn = async (metadataManager: MetadataManager) => {
     // test if it is working
     // authorize().then(listFiles).catch(console.error);
 
-    const authClient = await authorize();
+    // const authClient = await authorize();
+    // return authClient;
 
-    return authClient;
+    return {
+        loadSavedCredentialsIfExist,
+        saveCredentials,
+        authorize
+    };
 };
+
+export type LogIn = ReturnType<typeof logIn>;

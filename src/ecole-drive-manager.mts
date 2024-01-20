@@ -4,11 +4,24 @@ import path from 'node:path';
 import { google, Auth, drive_v3, Common } from 'googleapis';
 import { Metadata } from './metadata.mjs';
 import { displayNotification } from './notifier.mjs';
+import { LogIn } from './login.mjs';
 
-export const createEcoleDriveManager = (authClient: Auth.OAuth2Client, metadata: Pick<Metadata, 'cachedFiles'>) => {
+// Auth.OAuth2Client
+export const createEcoleDriveManager = async (login: LogIn, metadata: Pick<Metadata, 'cachedFiles'>) => {
     // Acquire an auth client, and bind it to all future calls
     //  google.options({ auth: authClient });
-    const drive = google.drive({ version: 'v3', auth: authClient });
+
+    const getDrive = async () => {
+        try {
+            const authClient = await login.authorize({ useSavedToken: true });
+            return google.drive({ version: 'v3', auth: authClient });
+        } catch {
+            const authClient = await login.authorize({ useSavedToken: false });
+            return google.drive({ version: 'v3', auth: authClient });
+        }
+    };
+
+    const drive = await getDrive();
 
     const ecoleFolderId = '1L2gGi_UpwT9_gDJpLyLq0prY3cAcLThO';
     const inEcoleQuery = `"${ecoleFolderId}" in parents`;
@@ -64,7 +77,7 @@ export const createEcoleDriveManager = (authClient: Auth.OAuth2Client, metadata:
 
     // Upload a file to the specified folder
     const updateFile = async (filePath: string, fileId: string): Promise<Pick<drive_v3.Schema$File, 'id'>> => {
-      // await displayNotification({ message: path.basename(filePath), subtitle: 'updateFile' });
+        // await displayNotification({ message: path.basename(filePath), subtitle: 'updateFile' });
 
         const file = await drive.files.update({
             fileId,
@@ -76,7 +89,7 @@ export const createEcoleDriveManager = (authClient: Auth.OAuth2Client, metadata:
             },
         }, gaxiosOptions);
 
-       // await displayNotification({ message: path.basename(filePath), subtitle: 'updateFile done' });
+        // await displayNotification({ message: path.basename(filePath), subtitle: 'updateFile done' });
 
         return file.data;
     };
@@ -84,7 +97,7 @@ export const createEcoleDriveManager = (authClient: Auth.OAuth2Client, metadata:
 
 
     const createFile = async (filePath: string): Promise<Pick<drive_v3.Schema$File, 'id'>> => {
-       // await displayNotification({ message: path.basename(filePath), subtitle: 'createFile' });
+        // await displayNotification({ message: path.basename(filePath), subtitle: 'createFile' });
 
         const { data: file } = await drive.files.create({
             // includePermissionsForView: '',
@@ -102,7 +115,7 @@ export const createEcoleDriveManager = (authClient: Auth.OAuth2Client, metadata:
         if (!file.id)
             throw new Error(`Could not create file "${filePath}"`);
 
-      // await displayNotification({ message: path.basename(filePath), subtitle: 'createFile done' });
+        // await displayNotification({ message: path.basename(filePath), subtitle: 'createFile done' });
 
         return file;
     };
@@ -155,7 +168,7 @@ export const createEcoleDriveManager = (authClient: Auth.OAuth2Client, metadata:
 
         const fileId = await getFileId();
 
-       // await displayNotification({ message: fileName + ' ' + fileId, subtitle: 'found' });
+        // await displayNotification({ message: fileName + ' ' + fileId, subtitle: 'found' });
 
         if (fileId) {
             await updateFile(filePath, fileId);

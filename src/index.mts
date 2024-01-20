@@ -38,7 +38,7 @@ const displayFile = (filePath: string) => opts.logOutputFilenames ? path.basenam
 
 if (opts.logOutputVerbose || opts.logOutputOnlySuccessFiles) {
 
-    await Promise.all(results.map(async r => {
+    const result = await Promise.allSettled(results.map(async r => {
         const file = displayFile(r.filePath);
 
         const display = async (type: 'success' | 'failed') => {
@@ -56,6 +56,12 @@ if (opts.logOutputVerbose || opts.logOutputOnlySuccessFiles) {
 
         await display(r.type);
     }));
+
+    const rejects = result.filter(r => r.status === 'rejected').reduce((s, r) => `${s} ${(r as PromiseRejectedResult).reason}`, '');
+
+    if (rejects) {
+        console.log(`Error: ${rejects}`);
+    }
 
     process.exit(exitCode);
 }

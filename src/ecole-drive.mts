@@ -1,10 +1,11 @@
+import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { createEcoleDriveManager } from './ecole-drive-manager.mjs';
-import { logIn } from './login.mjs';
 import { createMetadataManager } from './metadata.mjs';
-import { fileURLToPath } from 'node:url';
-import { findPackageJsonDirectory } from './util.mjs';
 import { displayNotification } from './notifier.mjs';
+import { findPackageJsonDirectory } from './util.mjs';
+import { logIn } from './login.mjs';
+
 
 const loadMetadata = async (metadataDir: string) => {
     // The file token.json stores the user's access and refresh tokens, and is
@@ -33,8 +34,7 @@ export const createEcoleDrive = async (options: { metadataDir?: string; enableNo
     const metadataManager = await loadMetadata(metadataDir);
     const metadata = metadataManager.getMetadata();
 
-    const authClient = await logIn(metadataManager);
-    const ecoleDrive = createEcoleDriveManager(authClient, metadata);
+    const ecoleDrive = await createEcoleDriveManager(logIn(metadataManager), metadata);
 
     type UploadFileReturn = { filePath: string; } & ({ fileId: string; type: 'success'; } | { message: string; type: 'failed'; });
 
