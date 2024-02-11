@@ -1,7 +1,7 @@
 
 import { createReadStream as createFsReadStream } from 'node:fs';
 import path from 'node:path';
-import { google, Auth, drive_v3, Common } from 'googleapis';
+import { google, drive_v3, Common } from 'googleapis';
 import { Metadata } from './metadata.mjs';
 import { displayNotification } from './notifier.mjs';
 import { LogIn } from './login.mjs';
@@ -27,7 +27,7 @@ export const createEcoleDriveManager = async (login: LogIn, metadata: Pick<Metad
     const inEcoleQuery = `"${ecoleFolderId}" in parents`;
 
     const gaxiosOptions: Common.GaxiosOptions = {
-        timeout: 10000
+        timeout: 120 * 1000
     };
     // const ecoleFolder = await drive.files.get({ fileId: ecoleFolderId });
 
